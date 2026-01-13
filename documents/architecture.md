@@ -13,15 +13,15 @@ FixFlow is a 3-tier application:
 
 ```mermaid
 graph TD
-    User[User] -->|HTTP/Browser| Frontend[Frontend (Next.js)]
+    User[User] -->|HTTP/Browser| Frontend["Frontend (Next.js)"]
     
-    subgraph Docker Network
-        Frontend -->|REST API /api/v1| Backend[Backend (FastAPI)]
+    subgraph DockerNet ["Docker Network"]
+        Frontend -->|REST API /api/v1| Backend["Backend (FastAPI)"]
         
-        Backend -->|SQL Read/Write| DB[(PostgreSQL)]
+        Backend -->|SQL Read/Write| DB[("PostgreSQL")]
         Backend -->|Vector Search| DB
         
-        subgraph Backend Internals
+        subgraph BackendInternals ["Backend Internals"]
             API[API Routes] --> Services[Services Layer]
             Services -->|Embed| LocalEmbed[Local Embedding Service]
             Services -->|Store/Retrieve| VectorStore[Postgres Vector Store]
