@@ -20,7 +20,8 @@ class LocalEmbeddingService(EmbeddingService):
                 "sentence-transformers is not installed. Please install it to use LocalEmbeddingService."
             )
         # This will download the model on first run
-        self.model = SentenceTransformer(model_name)
+        # Force device='cpu' to prevent meta tensor errors on some environments
+        self.model = SentenceTransformer(model_name, device="cpu")
 
     async def embed_text(self, text: str) -> List[float]:
         """Convert text into a vector embedding using local model."""

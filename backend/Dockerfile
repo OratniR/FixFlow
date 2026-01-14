@@ -1,24 +1,29 @@
-# Use official Python 3.11 slim image
-FROM python:3.11-slim
+# Start from a lightweight Python 3.13 image (Critical for ARM64 stability)
+FROM python:3.13-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies
-# - build-essential: for compiling some python packages
-# - libpq-dev: for psycopg2
+# Install system dependencies (OpenBLAS is key for ARM64 math stability)
 RUN apt-get update && apt-get install -y \
     build-essential \
-    libpq-dev \
+    cmake \
+    curl \
+    libopenblas-dev \
+    --no-install-recommends \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
-COPY requirements.txt .
+# Install uv (Package Manager)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && mv /root/.local/bin/uv /usr/local/bin/uv \
+    && mv /root/.local/bin/uvx /usr/local/bin/uvx
 
-# Install Python dependencies
-# Explicitly install torch CPU version first to keep image size small
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
-    && pip install --no-cache-dir -r requirements.txt
+# Copy dependency files
+COPY pyproject.toml .
+
+# Install dependencies using uv
+# --system installs into the system python environment, avoiding venv complexity in Docker
+RUN uv pip install -r pyproject.toml --system
 
 # Copy application code
 COPY . .

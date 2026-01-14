@@ -2,7 +2,6 @@ import os
 from typing import Optional
 from app.services.base import VectorStoreService, EmbeddingService
 from app.services.embedding import MockEmbeddingService
-from app.services.embedding_local import LocalEmbeddingService
 from app.services.vector_store import InMemoryVectorStore
 from app.services.vector_store_pg import PostgresVectorStore
 
@@ -20,6 +19,9 @@ def get_embedding_service() -> EmbeddingService:
     global _embedding_service
     if _embedding_service is None:
         if USE_LOCAL_EMBEDDING:
+            # Lazy import to avoid loading heavy dependencies (torch) if not needed
+            from app.services.embedding_local import LocalEmbeddingService
+
             # This loads the model into memory (approx 100MB for MiniLM)
             _embedding_service = LocalEmbeddingService()
         else:

@@ -6,7 +6,7 @@ from app.services.base import EmbeddingService
 class MockEmbeddingService(EmbeddingService):
     """Mock implementation of embedding service for testing."""
 
-    def __init__(self, dimension: int = 1536):
+    def __init__(self, dimension: int = 384):
         self.dimension = dimension
 
     async def embed_text(self, text: str) -> List[float]:

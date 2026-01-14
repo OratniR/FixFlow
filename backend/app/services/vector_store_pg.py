@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, text
 from sqlalchemy.orm import sessionmaker, Session
 from typing import List, Optional, Dict, Any, Generator
 from app.services.base import VectorStoreService
