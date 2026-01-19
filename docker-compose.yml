@@ -25,14 +25,9 @@ services:
       - OPENBLAS_NUM_THREADS=1
     volumes:
       - ./backend:/app
+      - huggingface_cache:/root/.cache/huggingface
     depends_on:
       - db
-    # Wait for DB to be ready
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   frontend:
     build:
@@ -53,3 +48,4 @@ services:
 
 volumes:
   postgres_data:
+  huggingface_cache:

@@ -22,12 +22,20 @@ class VectorStoreService(ABC):
 
     @abstractmethod
     async def search(
-        self, query_embedding: List[float], limit: int = 5, filters: Optional[Dict[str, Any]] = None
+        self,
+        query_embedding: List[float],
+        limit: int = 5,
+        filters: Optional[Dict[str, Any]] = None,
     ) -> List[SearchResult]:
         """Search for similar issues using vector similarity."""
         pass
 
     @abstractmethod
-    async def get_issue(self, issue_id: str) -> Optional[IssueRead]:
-        """Retrieve an issue by ID."""
+    async def get_trending(self, limit: int = 10) -> List[IssueRead]:
+        """Get trending issues."""
+        pass
+
+    @abstractmethod
+    async def increment_counter(self, issue_id: str, counter_type: str):
+        """Increment view or useful counter."""
         pass

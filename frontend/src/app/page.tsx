@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import TrendingIssues from '@/components/TrendingIssues';
 import IssueForm from '@/components/IssueForm';
 import SearchIssue from '@/components/SearchIssue';
 
@@ -43,6 +44,11 @@ export default function Home() {
               <p className="text-gray-600">Find solutions by describing the problem in natural language.</p>
             </div>
             <SearchIssue />
+          </section>
+
+          {/* Trending Section */}
+          <section>
+            <TrendingIssues />
           </section>
 
         </div>

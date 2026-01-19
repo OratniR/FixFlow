@@ -8,7 +8,9 @@ class IssueBase(BaseModel):
 
     title: str = Field(..., description="Brief summary of the issue")
     content: str = Field(..., description="Detailed description and logs (Markdown)")
-    solution: str = Field(..., description="The working fix and its reasoning (Markdown)")
+    solution: str = Field(
+        ..., description="The working fix and its reasoning (Markdown)"
+    )
     tags: List[str] = Field(default_factory=list, description="Categorization tags")
     metadata: Dict[str, Any] = Field(
         default_factory=dict, description="Additional context (env, language, etc)"
@@ -27,6 +29,8 @@ class IssueRead(IssueBase):
     id: str
     created_at: datetime
     updated_at: datetime
+    view_count: int = 0
+    useful_count: int = 0
 
 
 class SearchQuery(BaseModel):

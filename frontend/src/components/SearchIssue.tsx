@@ -14,7 +14,7 @@ export default function SearchIssue() {
     if (!query.trim()) return;
     
     setLoading(true);
-    setExpandedId(null); // Reset expansion on new search
+    setExpandedId(null);
     try {
       const data = await api.searchIssues(query);
       setResults(data);
@@ -25,8 +25,26 @@ export default function SearchIssue() {
     }
   };
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
+  const handleExpand = (id: string) => {
+    if (expandedId !== id) {
+      setExpandedId(id);
+      api.sendFeedback(id, 'view').catch(console.error);
+    } else {
+      setExpandedId(null);
+    }
+  };
+
+  const handleUseful = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    try {
+      await api.sendFeedback(id, 'useful');
+      setResults(results.map(r => 
+        r.id === id ? { ...r, useful_count: (r.useful_count || 0) + 1 } : r
+      ));
+      alert('Thanks for your feedback!');
+    } catch (error) {
+      console.error('Feedback failed:', error);
+    }
   };
 
   return (
@@ -59,10 +77,16 @@ export default function SearchIssue() {
             className={`border rounded-lg p-5 bg-white transition-all cursor-pointer ${
               expandedId === result.id ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:shadow-md'
             }`}
-            onClick={() => toggleExpand(result.id)}
+            onClick={() => handleExpand(result.id)}
           >
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-lg font-semibold text-blue-600">{result.title}</h3>
+              <div className="flex flex-col">
+                <h3 className="text-lg font-semibold text-blue-600">{result.title}</h3>
+                <div className="flex gap-2 text-xs text-gray-400 mt-1">
+                  <span>👀 {result.view_count || 0}</span>
+                  <span>👍 {result.useful_count || 0}</span>
+                </div>
+              </div>
               <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full shrink-0 ml-2">
                 Match: {(result.score * 100).toFixed(0)}%
               </span>
@@ -79,6 +103,14 @@ export default function SearchIssue() {
                   <div className="bg-gray-50 p-4 rounded-md text-gray-800 whitespace-pre-wrap">
                     {result.solution}
                   </div>
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={(e) => handleUseful(e, result.id)}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors text-xs font-medium"
+                    >
+                      👍 Helpful
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -90,12 +122,6 @@ export default function SearchIssue() {
                 </span>
               ))}
             </div>
-            
-            {expandedId !== result.id && (
-              <div className="mt-2 text-center">
-                <span className="text-xs text-blue-500 font-medium">Click to view solution</span>
-              </div>
-            )}
           </div>
         ))}
       </div>
