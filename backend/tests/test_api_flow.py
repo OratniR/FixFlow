@@ -1,15 +1,20 @@
 import pytest
+import uuid
 from httpx import AsyncClient, ASGITransport
 from app.main import app
 
 
 @pytest.mark.asyncio
 async def test_api_flow():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
+        unique_id = str(uuid.uuid4())
+
         # 1. Create Issue
         payload = {
-            "title": "Timeout Error",
-            "content": "Request timed out after 30s",
+            "title": f"Timeout Error {unique_id}",
+            "content": f"Request timed out after 30s {unique_id}",
             "solution": "Increase timeout to 60s",
             "tags": ["network", "timeout"],
             "metadata": {"env": "prod"},
@@ -26,7 +31,7 @@ async def test_api_flow():
         assert response.json()["id"] == issue_id
 
         # 3. Search Issue
-        search_payload = {"query": "request time out", "limit": 5}
+        search_payload = {"query": f"Request timed out {unique_id}", "limit": 5}
         response = await ac.post("/api/v1/search", json=search_payload)
         assert response.status_code == 200
         results = response.json()

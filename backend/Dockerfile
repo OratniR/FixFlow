@@ -23,7 +23,10 @@ COPY pyproject.toml .
 
 # Install dependencies using uv
 # --system installs into the system python environment, avoiding venv complexity in Docker
-RUN uv pip install -r pyproject.toml --system
+RUN uv pip install -r pyproject.toml --system && \
+    uv pip install pytest pytest-asyncio --system
+
+ENV PYTHONPATH=/app
 
 # Copy application code
 COPY . .

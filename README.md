@@ -46,6 +46,21 @@
 2.  Click **+ New Issue** to document a problem you just solved.
 3.  Use the **Search Bar** to find it again using natural language (e.g., "How did I fix that database error?").
 
+## 🧠 Search Engine Architecture
+
+FixFlow uses a **Weighted Hybrid Search** algorithm designed to balance *semantic relevance* with *community validation*. 
+
+### The Formula
+```math
+Final Score = Similarity \times (1 + 0.1 \times \ln(Views + 10 \times Useful + 1))
+```
+
+### Why it works
+1.  **Semantic Core**: The base score is Cosine Similarity (0-1) from `sentence-transformers`. This ensures results are always relevant to the *meaning* of the query.
+2.  **Logarithmic Dampening**: We use `ln()` to dampen the popularity signal. A post with 10,000 views is not 100x better than one with 100 views. This prevents "viral" issues from drowning out niche technical solutions (References: *Log-Gases Partition Functions* [arXiv:2105.14378](https://arxiv.org/abs/2105.14378) for stability in unbounded systems).
+3.  **Quality over Quantity**: "Useful" votes are weighted **10x** higher than passive views.
+4.  **Multiplicative Boosting**: By multiplying rather than adding, we ensure that an irrelevant result (Similarity ≈ 0) stays at 0, no matter how popular it is.
+
 ## 📂 Project Structure
 
 ```
