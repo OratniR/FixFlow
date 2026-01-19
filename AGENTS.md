@@ -82,3 +82,12 @@ Run these from `frontend/` directory:
 - **Minimal Changes**: Do not refactor unrelated code unless necessary.
 - **Verify**: After changes, run type checks (`mypy` or `tsc`) and linters to ensure compliance.
 - **Documentation**: Update docstrings (Python) or JSDoc (TS) if logic changes significantly.
+
+## 🧠 Knowledge Preservation Protocol
+
+**If you encounter a complex issue (requires 2+ attempts to fix or deep reasoning):**
+1.  **Solve it**: Apply the fix and verify it works.
+2.  **Store it**: IMMEDIATELY use the `fixflow_knowledge_base` tool (action: `store`) to save the Problem and Solution.
+    *   **Query**: The error message or specific challenge.
+    *   **Solution**: The working fix, including context on *why* it failed initially.
+3.  **Search First**: Before solving a hard problem, check if a solution already exists using `fixflow_knowledge_base` (action: `search`).
