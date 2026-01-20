@@ -6,6 +6,7 @@ import { api, Issue } from '@/lib/api';
 export default function TrendingIssues() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -14,10 +15,13 @@ export default function TrendingIssues() {
 
   const loadTrending = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const data = await api.getTrending();
       setIssues(data);
     } catch (error) {
       console.error('Failed to load trending:', error);
+      setError('Failed to load trending issues. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -48,7 +52,22 @@ export default function TrendingIssues() {
   };
 
   if (loading) return <div className="text-gray-500 text-center py-4">Loading trending knowledge...</div>;
-  if (issues.length === 0) return null;
+  
+  if (error) {
+    return (
+      <div className="text-center py-4">
+        <div className="text-red-500 mb-2">{error}</div>
+        <button 
+          onClick={loadTrending}
+          className="text-blue-600 hover:underline text-sm"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (issues.length === 0) return <div className="text-gray-500 text-center py-4">No trending issues found.</div>;
 
   return (
     <div className="space-y-4">
